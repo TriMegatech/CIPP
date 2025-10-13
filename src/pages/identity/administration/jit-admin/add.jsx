@@ -10,7 +10,7 @@ import gdaproles from "/src/data/GDAPRoles.json";
 import { CippFormDomainSelector } from "../../../../components/CippComponents/CippFormDomainSelector";
 import { CippFormUserSelector } from "../../../../components/CippComponents/CippFormUserSelector";
 const Page = () => {
-  const formControl = useForm({ Mode: "onChange" });
+  const formControl = useForm({ mode: "onChange" });
   return (
     <>
       <CippFormPage
@@ -22,15 +22,17 @@ const Page = () => {
       >
         <Box sx={{ my: 2 }}>
           <Grid container spacing={2}>
-            <Grid item size={{ md: 12, xs: 12 }}>
+            <Grid size={{ md: 12, xs: 12 }}>
               <CippFormTenantSelector
                 label={"Select a tenant to create the JIT Admin in"}
                 formControl={formControl}
                 type="single"
                 allTenants={false}
+                preselectedEnabled={true}
+                validators={{ required: "A tenant must be selected" }}
               />
             </Grid>
-            <Grid item size={{ md: 12, xs: 12 }}>
+            <Grid size={{ md: 12, xs: 12 }}>
               <Divider sx={{ mb: 2 }} />
               <CippFormComponent
                 type="radio"
@@ -43,6 +45,7 @@ const Page = () => {
                   { label: "Existing User", value: "select" },
                 ]}
                 required={true}
+                validators={{ required: "You must select an option" }}
               />
               <Divider sx={{ my: 2 }} />
             </Grid>
@@ -52,7 +55,7 @@ const Page = () => {
               compareType="is"
               compareValue="create"
             >
-              <Grid item size={{ md: 6, xs: 12 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <CippFormComponent
                   type="textField"
                   fullWidth
@@ -60,9 +63,10 @@ const Page = () => {
                   name="firstName"
                   formControl={formControl}
                   required={true}
+                  validators={{ required: "First Name is required" }}
                 />
               </Grid>
-              <Grid item size={{ md: 6, xs: 12 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <CippFormComponent
                   type="textField"
                   fullWidth
@@ -70,9 +74,10 @@ const Page = () => {
                   name="lastName"
                   formControl={formControl}
                   required={true}
+                  validators={{ required: "Last Name is required" }}
                 />
               </Grid>
-              <Grid item size={{ md: 6, xs: 12 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <CippFormComponent
                   type="textField"
                   fullWidth
@@ -80,25 +85,19 @@ const Page = () => {
                   name="userName"
                   formControl={formControl}
                   required={true}
+                  validators={{ required: "Username is required" }}
                 />
               </Grid>
-              <Grid item size={{ md: 6, xs: 12 }}>
+              <Grid size={{ md: 6, xs: 12 }}>
                 <CippFormDomainSelector
                   formControl={formControl}
                   name="domain"
                   label="Domain Name"
                   required={true}
-                  validators={{
-                    validate: (option) => {
-                      if (!option?.value) {
-                        return "Domain is required";
-                      }
-                      return true;
-                    },
-                  }}
+                  validators={{ required: "Domain is required" }}
                 />
               </Grid>
-              <Grid item size={{ md: 12, xs: 12 }}>
+              <Grid size={{ md: 12, xs: 12 }}>
                 <Divider sx={{ me: 2 }} />
               </Grid>
             </CippFormCondition>
@@ -108,19 +107,20 @@ const Page = () => {
               compareType="is"
               compareValue="select"
             >
-              <Grid item size={{ md: 12, xs: 12 }}>
-                <Grid item size={{ md: 12, xs: 12 }}>
+              <Grid size={{ md: 12, xs: 12 }}>
+                <Grid size={{ md: 12, xs: 12 }}>
                   <CippFormUserSelector
                     formControl={formControl}
                     multiple={false}
                     name="existingUser"
                     label="User"
                     required={true}
+                    validators={{ required: "User is required" }}
                   />
                 </Grid>
               </Grid>
             </CippFormCondition>
-            <Grid item size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <CippFormComponent
                 type="datePicker"
                 fullWidth
@@ -128,17 +128,10 @@ const Page = () => {
                 name="startDate"
                 formControl={formControl}
                 required={true}
-                validators={{
-                  validate: (value) => {
-                    if (!value) {
-                      return "Start date is required";
-                    }
-                    return true;
-                  },
-                }}
+                validators={{ required: "Start date is required" }}
               />
             </Grid>
-            <Grid item size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <CippFormComponent
                 type="datePicker"
                 fullWidth
@@ -147,12 +140,10 @@ const Page = () => {
                 formControl={formControl}
                 required={true}
                 validators={{
+                  required: "End date is required",
                   validate: (value) => {
                     const startDate = formControl.getValues("startDate");
-                    if (!value) {
-                      return "End date is required";
-                    }
-                    if (new Date(value) < new Date(startDate)) {
+                    if (value && startDate && new Date(value) < new Date(startDate)) {
                       return "End date must be after start date";
                     }
                     return true;
@@ -160,7 +151,7 @@ const Page = () => {
                 }}
               />
             </Grid>
-            <Grid item size={{ md: 12, xs: 12 }}>
+            <Grid size={{ md: 12, xs: 12 }}>
               <CippFormComponent
                 type="autoComplete"
                 fullWidth
@@ -170,6 +161,7 @@ const Page = () => {
                 formControl={formControl}
                 required={true}
                 validators={{
+                  required: "At least one role is required",
                   validate: (options) => {
                     if (!options?.length) {
                       return "At least one role is required";
@@ -179,7 +171,20 @@ const Page = () => {
                 }}
               />
             </Grid>
-            <Grid item size={{ md: 12, xs: 12 }}>
+            <Grid size={{ md: 12, xs: 12 }}>
+              <CippFormComponent
+                type="textField"
+                label="Reason"
+                name="reason"
+                placeholder="Enter the reason for adding this JIT Admin"
+                multiline
+                rows={3}
+                formControl={formControl}
+                required={true}
+                validators={{ required: "A reason is required" }}
+              />
+            </Grid>
+            <Grid size={{ md: 12, xs: 12 }}>
               <CippFormComponent
                 type="switch"
                 label="Generate TAP"
@@ -187,31 +192,24 @@ const Page = () => {
                 formControl={formControl}
               />
             </Grid>
-            <Grid item size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <CippFormComponent
                 type="autoComplete"
                 fullWidth
                 label="Expiration Action"
                 name="expireAction"
                 multiple={false}
+                required={true}
                 options={[
                   { label: "Delete User", value: "DeleteUser" },
                   { label: "Disable User", value: "DisableUser" },
                   { label: "Remove Roles", value: "RemoveRoles" },
                 ]}
                 formControl={formControl}
-                required={true}
-                validators={{
-                  validate: (option) => {
-                    if (!option?.value) {
-                      return "Expiration action is required";
-                    }
-                    return true;
-                  },
-                }}
+                validators={{ required: "Expiration action is required" }}
               />
             </Grid>
-            <Grid item size={{ md: 6, xs: 12 }}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <CippFormComponent
                 type="autoComplete"
                 fullWidth

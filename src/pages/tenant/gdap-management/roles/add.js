@@ -56,12 +56,14 @@ const Page = () => {
       groupName: selectedGroup.label,
       groupId: selectedGroup.value,
       roleName: selectedRole.label,
-      roleId: selectedRole.value,
+      roleDefinitionId: selectedRole.value,
     };
 
     if (
       advancedMappings.some(
-        (mapping) => mapping.groupId === newMapping.groupId && mapping.roleId === newMapping.roleId
+        (mapping) =>
+          mapping.groupId === newMapping.groupId &&
+          mapping.roleDefinitionId === newMapping.roleDefinitionId
       )
     ) {
       return;
@@ -75,7 +77,8 @@ const Page = () => {
   const handleRemoveMapping = (mappingToRemove) => {
     const updatedMappings = advancedMappings.filter(
       (mapping) =>
-        mapping.groupId !== mappingToRemove.groupId || mapping.roleId !== mappingToRemove.roleId
+        mapping.groupId !== mappingToRemove.groupId ||
+        mapping.roleDefinitionId !== mappingToRemove.roleDefinitionId
     );
     setAdvancedMappings(updatedMappings);
   };
@@ -243,7 +246,7 @@ const Page = () => {
               </ul>
             </Alert>
             <Grid container spacing={2} alignItems="center">
-              <Grid item size={{ md: 5, xs: 12 }}>
+              <Grid size={{ md: 5, xs: 12 }}>
                 <CippFormComponent
                   formControl={formControl}
                   name="selectedGroup"
@@ -260,14 +263,14 @@ const Page = () => {
                   sortOptions={true}
                 />
               </Grid>
-              <Grid item>
+              <Grid>
                 <Box sx={{ my: "auto" }}>
                   <SvgIcon>
                     <SyncAlt />
                   </SvgIcon>
                 </Box>
               </Grid>
-              <Grid item size={{ md: 5, xs: 12 }}>
+              <Grid size={{ md: 5, xs: 12 }}>
                 <CippFormComponent
                   formControl={formControl}
                   name="selectedRole"
@@ -284,7 +287,7 @@ const Page = () => {
                   sortOptions={true}
                 />
               </Grid>
-              <Grid item size={{ md: 1, xs: 12 }}>
+              <Grid size={{ md: 1, xs: 12 }}>
                 <Tooltip title="Add Mapping">
                   <Button size="small" onClick={handleAddMapping} variant="contained">
                     <SvgIcon fontSize="small">
